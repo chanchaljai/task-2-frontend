@@ -36,13 +36,13 @@ const homeRoute = createRoute({
 
 const registerRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: "/register",
+  path: "/auth/register",
   component: Register,
 });
 
 const loginRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: "/login",
+  path: "/auth/login",
   component: Login,
 });
 

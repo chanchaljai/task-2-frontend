@@ -5,6 +5,7 @@ import {
   registerSchema,
   type RegisterFormData,
 } from "../schemas/registerSchema";
+import { Link } from "@tanstack/react-router";
 
 function Register() {
   const form = useForm({
@@ -151,6 +152,12 @@ function Register() {
           >
             Register
           </button>
+          <p className="mt-1 text-center text-sm text-gray-600">
+            Already have an account?{" "}
+            <Link to="/auth/login" className="text-blue-600 hover:underline">
+              Go to Login
+            </Link>
+          </p>
         </form>
       </div>
     </div>
