@@ -22,7 +22,7 @@ function Login() {
       if(isOtp){
         navigate({to: "/verify-otp"});
       }else{
-        navigate({to: "/user"});
+        navigate({to: "/users"});
       }
 
     },

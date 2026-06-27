@@ -1,7 +1,18 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
+import { useNavigate } from "@tanstack/react-router";
 const Verifyotp = ({ OtpLenght = 6 }) => {
+  const navigate = useNavigate();
   const [otp, setOtp] = useState(new Array(OtpLenght).fill(""));
   console.log(otp);
+  // handleChange ka logic
+  const handleChange = (value: string, index: number) => {
+    if (!/^\d*$/.test(value)) return; // sirf number allow karo
+    const newOtp = [...otp];
+    newOtp[index] = value;
+    setOtp(newOtp);
+  }
+  
+
   return (
     <div className="bg-gray-200 min-h-screen flex items-center justify-center">
       <div className="w-full max-w-md rounded-lg bg-white p-6 shadow">
@@ -19,9 +30,9 @@ const Verifyotp = ({ OtpLenght = 6 }) => {
               type="text"
               maxLength={1}
               value={value}
-              className="w-12 h-12 border rounded  text-xl"
+              className="w-12 h-12 border rounded text-center text-xl"
               onChange={(e) => handleChange(e.target.value, index)}
-              onKeyDown={(e) => handleKeyDown(e, index)}
+              // onKeyDown={(e) => handleKeyDown(e, index)}
             />
           ))}
         </div>
@@ -32,7 +43,8 @@ const Verifyotp = ({ OtpLenght = 6 }) => {
           </p>
         </div>
         <div className="text-center">
-          <button className="text-white bg-red-600 test-2xl font-bold px-10 py-3 rounded my-6 hover:bg-red-700 hover: cursor-pointer">
+          <button onClick={() => navigate({to: "/users"})}
+          className="text-white bg-red-600 test-2xl font-bold px-10 py-3 rounded my-6 hover:bg-red-700 hover: cursor-pointer">
             Verify
           </button>
         </div>

@@ -2,20 +2,27 @@ import {
   createRootRoute,
   createRoute,
   createRouter,
+  Outlet,
 } from "@tanstack/react-router";
 
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
-import User from "./pages/User";
 import Verifyotp from "./pages/Verifyotp";
+import Users from "./pages/Users"; // aapka user page
+
+// Root layout - sirf Outlet, koi UI nahi
 function RootLayout() {
+  return <Outlet />;
+}
+
+// Header wala layout (auth pages ke liye)
+function MainLayout() {
   return (
     <div>
       <h1 className="text-center text-2xl font-bold py-4">
         TanStack Form and Router Example
       </h1>
-
       <hr />
       <div className="p-4">
         <Outlet />
@@ -24,49 +31,76 @@ function RootLayout() {
   );
 }
 
-import { Outlet } from "@tanstack/react-router";
+// User layout - bina h1 ke
+function UserLayout() {
+  return (
+    <div className="p-4">
+      <Outlet />
+    </div>
+  );
+}
 
 const rootRoute = createRootRoute({
   component: RootLayout,
 });
-const homeRoute = createRoute({
+
+// Main layout route (virtual parent)
+const mainLayoutRoute = createRoute({
   getParentRoute: () => rootRoute,
+  id: "main",
+  component: MainLayout,
+});
+
+// User layout route (virtual parent)
+const userLayoutRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  id: "user",
+  component: UserLayout,
+});
+
+// Main layout ke andar ke routes
+const homeRoute = createRoute({
+  getParentRoute: () => mainLayoutRoute,
   path: "/",
   component: Home,
 });
 
 const registerRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => mainLayoutRoute,
   path: "/auth/register",
   component: Register,
 });
 
 const loginRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => mainLayoutRoute,
   path: "/auth/login",
   component: Login,
 });
-const userRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/user",
-  component: User,
-});
+
 const verifyotpRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => mainLayoutRoute,
   path: "/verify-otp",
   component: Verifyotp,
-})
+});
 
-
+// User layout ke andar ke routes (bina h1 ke)
+const userRoute = createRoute({
+  getParentRoute: () => userLayoutRoute,
+  path: "/users",
+  component: Users
+});
 
 const routeTree = rootRoute.addChildren([
-  homeRoute,
-  registerRoute,
-  loginRoute,
-  userRoute,
-  verifyotpRoute
+  mainLayoutRoute.addChildren([
+    homeRoute,
+    registerRoute,
+    loginRoute,
+    verifyotpRoute,
+  ]),
+  userLayoutRoute.addChildren([
+    userRoute,
+    // aur bhi user routes yahan add karo
+  ]),
 ]);
 
-export const router = createRouter({
-  routeTree,
-});
+export const router = createRouter({ routeTree });
