@@ -7,7 +7,8 @@ import {
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
-
+import User from "./pages/User";
+import Verifyotp from "./pages/Verifyotp";
 function RootLayout() {
   return (
     <div>
@@ -45,11 +46,25 @@ const loginRoute = createRoute({
   path: "/auth/login",
   component: Login,
 });
+const userRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/user",
+  component: User,
+});
+const verifyotpRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/verify-otp",
+  component: Verifyotp,
+})
+
+
 
 const routeTree = rootRoute.addChildren([
   homeRoute,
   registerRoute,
   loginRoute,
+  userRoute,
+  verifyotpRoute
 ]);
 
 export const router = createRouter({

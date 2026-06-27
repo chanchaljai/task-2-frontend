@@ -3,8 +3,12 @@ import { useForm } from "@tanstack/react-form";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import { loginSchema } from "../schemas/loginSchema";
+import { useNavigate } from "@tanstack/react-router";
 
 function Login() {
+    const [isOtp, setIsOtp] = useState(false);
+  const navigate = useNavigate();
+
   const form = useForm({
     defaultValues: {
       name: "",
@@ -14,9 +18,18 @@ function Login() {
     },
     onSubmit: async ({ value }) => {
       console.log(value);
+      // validation ke bad
+      if(isOtp){
+        navigate({to: "/verify-otp"});
+      }else{
+        navigate({to: "/user"});
+      }
+
     },
   });
-  const [isOtp, setIsOtp] = useState(false);
+
+
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-200">
       <div className="w-full max-w-md rounded-lg bg-white p-6 shadow">
@@ -118,7 +131,8 @@ function Login() {
             </label>
           </div>
 
-          <button className="w-full bg-black text-white font-bold py-3 px-4 rounded">
+          <button
+          className="w-full bg-black text-white font-bold py-3 px-4 rounded">
             {isOtp ? "Send OTP" : "Login"}
           </button>
         </form>
