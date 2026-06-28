@@ -1,8 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import useApi from "../hooks/UseApi";
+import { useState } from "react";
 import type {User} from "../types/user";
 const Users = () => {
-  const { data, isLoading, isError, error } = useApi();
+  const LIMIT = 10;
+  const [page, setPage] = useState(1);
+  const skip = (page - 1) * LIMIT;
+  const { data, isLoading, isError, error } = useApi(LIMIT, skip);
+  const totalPages = data ? Math.ceil(data.total / LIMIT) : 0;
   if(isLoading) {
     return <div>Loading...</div>
   }
@@ -44,6 +49,40 @@ const Users = () => {
           ))}
         </tbody>
       </table>
+      {/* Pagination Button */}
+          <div className="flex justify-center items-center gap-2 mt-6">
+        <button
+          onClick={() => setPage((p) => p - 1)}
+          disabled={page === 1}
+          className="px-3 py-1 border rounded disabled:opacity-40 hover:bg-gray-100"
+        >
+          ← Prev
+        </button>
+
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+          <button
+            key={p}
+            onClick={() => setPage(p)}
+            className={`px-3 py-1 border rounded ${
+              page === p ? "bg-blue-500 text-white" : "hover:bg-gray-100"
+            }`}
+          >
+            {p}
+          </button>
+        ))}
+
+        <button
+          onClick={() => setPage((p) => p + 1)}
+          disabled={page === totalPages}
+          className="px-3 py-1 border rounded disabled:opacity-40 hover:bg-gray-100"
+        >
+          Next →
+        </button>
+      </div>
+
+      <p className="text-center text-sm text-gray-400 mt-2">
+        Page {page} of {totalPages} — Total {data?.total} users
+      </p>
     </div>
   );
 };
