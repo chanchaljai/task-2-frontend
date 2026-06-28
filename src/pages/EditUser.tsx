@@ -1,12 +1,13 @@
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
-import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useNavigate, useParams } from "@tanstack/react-router";
 
-const AddUser = () => {
+const EditUser = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { id } = useParams({ strict: false });
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -16,11 +17,34 @@ const AddUser = () => {
     age: "",
   });
 
-  // API call
+  // User fetch karo
+  const { data: user, isLoading } = useQuery({
+    queryKey: ["user", id],
+    queryFn: async () => {
+      const res = await fetch(`https://dummyjson.com/users/${id}`);
+      if (!res.ok) throw new Error("User nahi mila");
+      return res.json();
+    },
+  });
+
+  // Data aane pe form fill karo
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        phone: user.phone,
+        age: String(user.age),
+      });
+    }
+  }, [user]);
+
+  // Update API
   const { mutate, isPending } = useMutation({
     mutationFn: async () => {
-      const response = await fetch("https://dummyjson.com/users/add", {
-        method: "POST",
+      const res = await fetch(`https://dummyjson.com/users/${id}`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           firstName: formData.firstName,
@@ -30,12 +54,12 @@ const AddUser = () => {
           age: Number(formData.age),
         }),
       });
-      if (!response.ok) throw new Error("User add nahi hua");
-      return response.json();
+      if (!res.ok) throw new Error("Update nahi hua");
+      return res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] }); // list refresh
-      navigate({ to: "/users" }); // wapas list pe jao
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      navigate({ to: "/users" });
     },
     onError: (err) => {
       alert(err.message);
@@ -52,16 +76,18 @@ const AddUser = () => {
     mutate();
   };
 
+  if (isLoading) return <div className="text-center mt-10">Loading...</div>;
+
   return (
     <div className="min-h-screen bg-gray-200 flex items-center justify-center">
       <div className="w-full max-w-md rounded-lg bg-white p-4 shadow">
         <h1 className="text-2xl font-bold text-gray-800 text-center mb-4">
-          Add User
+          Edit User
         </h1>
         <form className="w-full flex flex-col space-y-4" onSubmit={handleSubmit}>
           <input
             type="text"
-            name="firstName"         // ← name add kiya
+            name="firstName"
             placeholder="First Name"
             value={formData.firstName}
             onChange={handleChange}
@@ -108,9 +134,9 @@ const AddUser = () => {
           <button
             type="submit"
             disabled={isPending}
-            className="w-full bg-blue-500 text-white rounded py-2 text-xl disabled:opacity-50"
+            className="w-full bg-blue-500 text-white rounded py-2 text-2xl disabled:opacity-50"
           >
-            {isPending ? "Submitting..." : "Submit"}
+            {isPending ? "Updating..." : "Update Data"}
           </button>
         </form>
       </div>
@@ -118,4 +144,4 @@ const AddUser = () => {
   );
 };
 
-export default AddUser;
+export default EditUser;

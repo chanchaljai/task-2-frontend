@@ -10,6 +10,8 @@ import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Verifyotp from "./pages/Verifyotp";
 import Users from "./pages/Users"; // aapka user page
+import AddUser from "./pages/AddUser";
+import EditUser from "./pages/EditUser";
 
 // Root layout - sirf Outlet, koi UI nahi
 function RootLayout() {
@@ -89,6 +91,17 @@ const userRoute = createRoute({
   path: "/users",
   component: Users
 });
+const addRoute = createRoute({
+  getParentRoute: () => userLayoutRoute,
+  path: "/users/add",
+  component: AddUser
+})
+const editRoute = createRoute({
+  getParentRoute: () => userLayoutRoute,
+  path: "/users/edit/$id",
+  component: EditUser
+})
+
 
 const routeTree = rootRoute.addChildren([
   mainLayoutRoute.addChildren([
@@ -99,6 +112,8 @@ const routeTree = rootRoute.addChildren([
   ]),
   userLayoutRoute.addChildren([
     userRoute,
+    addRoute,
+    editRoute,
     // aur bhi user routes yahan add karo
   ]),
 ]);

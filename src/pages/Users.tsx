@@ -1,18 +1,18 @@
 import { Link } from "@tanstack/react-router";
 import useApi from "../hooks/UseApi";
 import { useState } from "react";
-import type {User} from "../types/user";
+import type { User } from "../types/user";
 const Users = () => {
   const LIMIT = 10;
   const [page, setPage] = useState(1);
   const skip = (page - 1) * LIMIT;
   const { data, isLoading, isError, error } = useApi(LIMIT, skip);
   const totalPages = data ? Math.ceil(data.total / LIMIT) : 0;
-  if(isLoading) {
-    return <div>Loading...</div>
+  if (isLoading) {
+    return <div>Loading...</div>;
   }
-  if(isError) {
-    return <div>Error: {error?.message}</div>
+  if (isError) {
+    return <div>Error: {error?.message}</div>;
   }
   console.log(data);
   console.log(data?.limit);
@@ -21,7 +21,7 @@ const Users = () => {
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Users List</h2>
         <Link
-          to="/admin/products/add"
+          to="/users/add"
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
         >
           Add New User
@@ -37,20 +37,36 @@ const Users = () => {
             <th className="px-4 py-2 border border-gray-200">Action</th>
           </tr>
         </thead>
-        <tbody>{/* Users list ke liye data show karo */}
+        <tbody>
+          {/* Users list ke liye data show karo */}
           {data?.users.map((user) => (
             <tr key={user.id}>
-              <td className="px-4 py-2 border border-gray-200">{user.firstName} {user.lastName}</td>
+              <td className="px-4 py-2 border border-gray-200">
+                {user.firstName} {user.lastName}
+              </td>
               <td className="px-4 py-2 border border-gray-200">{user.email}</td>
               <td className="px-4 py-2 border border-gray-200">{user.phone}</td>
               <td className="px-4 py-2 border border-gray-200">{user.age}</td>
-              <td className="px-4 py-2 border border-gray-200">Action</td>
+              <td className="px-4 py-2 border border-gray-200">
+                <Link
+                  to= "/users/edit/$id"
+                  params={{ id: String(user.id) }}
+                  className="text-blue-500 hover:underline mr-4"
+                >
+                  Edit
+                </Link>
+                <button
+                  className="text-red-500 hover:underline"
+                >
+                  Delete
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
       {/* Pagination Button */}
-          <div className="flex justify-center items-center gap-2 mt-6">
+      <div className="flex justify-center items-center gap-2 mt-6">
         <button
           onClick={() => setPage((p) => p - 1)}
           disabled={page === 1}

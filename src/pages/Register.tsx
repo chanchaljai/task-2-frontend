@@ -1,6 +1,7 @@
 import { useForm } from "@tanstack/react-form";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
+import { useNavigate } from "@tanstack/react-router";
 import {
   registerSchema,
   type RegisterFormData,
@@ -8,6 +9,7 @@ import {
 import { Link } from "@tanstack/react-router";
 
 function Register() {
+  const navigate = useNavigate();
   const form = useForm({
     defaultValues: {
       name: "",
@@ -18,6 +20,7 @@ function Register() {
 
     onSubmit: async ({ value }) => {
       console.log(value);
+      navigate({ to: "/users" });
     },
   });
 
