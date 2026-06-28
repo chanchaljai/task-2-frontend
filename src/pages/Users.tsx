@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import useApi from "../hooks/Useapi";
+import useApi from "../hooks/UseApi";
+import type {User} from "../types/user";
 const Users = () => {
   const { data, isLoading, isError, error } = useApi();
   if(isLoading) {
@@ -9,6 +10,7 @@ const Users = () => {
     return <div>Error: {error?.message}</div>
   }
   console.log(data);
+  console.log(data?.limit);
   return (
     <div className="max-w-4xl mx-auto mt-10">
       <div className="flex justify-between items-center mb-4">
