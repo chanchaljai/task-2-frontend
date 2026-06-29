@@ -1,8 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import useApi from "../hooks/UseApi";
 import { useState } from "react";
+import Deletecard from "../components/Deletecard";
 import type { User } from "../types/user";
 const Users = () => {
+  const[openCard, setOpenCard] = useState(false);
   const LIMIT = 10;
   const [page, setPage] = useState(1);
   const skip = (page - 1) * LIMIT;
@@ -56,6 +58,7 @@ const Users = () => {
                   Edit
                 </Link>
                 <button
+                onClick={()=> setOpenCard(true)}
                   className="text-red-500 hover:underline"
                 >
                   Delete
@@ -65,6 +68,11 @@ const Users = () => {
           ))}
         </tbody>
       </table>
+      {openCard && (
+  <div className="fixed inset-0 bg-black/80 flex items-center justify-center">
+    <Deletecard setOpenCard={setOpenCard} />
+  </div>
+)}
       {/* Pagination Button */}
       <div className="flex justify-center items-center gap-2 mt-6">
         <button
